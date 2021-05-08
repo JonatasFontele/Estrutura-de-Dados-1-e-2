@@ -18,21 +18,23 @@ class LinkedList:
                 node.next = Node(data=elem)
                 node = node.next
 
+    def __repr__(self):
+        node = self.head
+        nodes = []
+        while node is not None:
+            nodes.append(node.data)
+            # or print(node.data) each line
+            node = node.next
+        nodes.append("None")
+        return " -> ".join(nodes)
+
+    # Returns the iterator object itself
     def __iter__(self):
         node = self.head
         while node is not None:
             # yield works more or less as a return, but it returns a generator
             yield node
             node = node.next
-
-    def __repr__(self):
-        node = self.head
-        nodes = []
-        while node is not None:
-            nodes.append(node.data)
-            node = node.next
-        nodes.append("None")
-        return " -> ".join(nodes)
 
     def add_first(self, node):
         node.next = self.head
@@ -45,6 +47,10 @@ class LinkedList:
         for current_node in self:
             pass
         current_node.next = node
+        # last = self.head
+        # while (last.next):
+        #     last = last.next
+        # last.next = node
 
     # Adds a node after an existing node with a specific data value
     def add_after(self, target_node_data, new_node):
