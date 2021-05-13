@@ -77,13 +77,13 @@ class LinkedList:
         if self.head.data == target_node_data:
             return self.add_first(new_node)
 
-        prev_node = self.head
+        previous_node = self.head
         for node in self:
             if node.data == target_node_data:
-                prev_node.next = new_node
+                previous_node.next = new_node
                 new_node.next = node
                 return
-            prev_node = node
+            previous_node = node
 
         raise Exception("Node with data '%s' not found" % target_node_data)
 
@@ -104,22 +104,48 @@ class LinkedList:
 
         raise Exception("Node with data '%s' not found" % target_node_data)
 
-    def get_node(self, target_node_data):
+    def get_node(self, target_node_position):
         if self.head is None:
             raise Exception("List is empty")
-
-        if self.head.data == target_node_data:
-            self.head = self.head.next
-            return
-
-        previous_node = self.head
+        position = 0
         for node in self:
-            if node.data == target_node_data:
-                previous_node.next = node.next
-                return
-            previous_node = node
+            if position == target_node_position:
+                return node.data
+            position += 1
 
-        raise Exception("Node with data '%s' not found" % target_node_data)
+        raise Exception("Node with position '%s' not found" % target_node_position)
+
+    def reverse(self):
+        previous_node = None
+        node = self.head
+        while node is not None:
+            next_node = node.next
+            node.next = previous_node
+            previous_node = node
+            node = next_node
+        self.head = previous_node
+
+
+# Queue() object inheriting linked list
+class Queue(LinkedList):
+    def __init__(self, nodes=None):
+        super().__init__(nodes=None)
+        self.head = None
+        # Allows to quickly create linked lists with some data
+        if nodes is not None:
+            node = Node(data=nodes.pop(0))
+            self.head = node
+            for elem in nodes:
+                node.next = Node(data=elem)
+                node = node.next
+
+    def enqueue(self, node):
+        LinkedList.add_last(self, node)
+
+    def dequeue(self):
+        if self.head is None:
+            raise Exception("List is empty")
+        self.head = self.head.next
 
 
 class CircularLinkedList:
@@ -143,29 +169,68 @@ class CircularLinkedList:
 
 
 def main():
+    print("Linked Lists")
     linked_list = LinkedList()
     first_node = Node("b")
     linked_list.head = first_node
+    print("First node")
     print(linked_list)
+
     second_node = Node("c")
     third_node = Node("d")
     first_node.next = second_node
     second_node.next = third_node
+    print("Second and third node")
     print(linked_list)
+
     linked_list.add_first(Node("a"))
+    print("Add node at beginning")
     print(linked_list)
+
     linked_list.add_last(Node("e"))
+    print("Add node at end")
     print(linked_list)
+
     linked_list.add_after("c", Node("cc"))
+    print("Add node after c")
     print(linked_list)
+
     linked_list.add_before("c", Node("bb"))
+    print("Add node before c")
     print(linked_list)
+
     linked_list.remove_node("bb")
     linked_list.remove_node("cc")
+    print("Remove nodes before bb and cc")
     print(linked_list)
+
+    print("Retrieve an element from a specific position")
+    print(linked_list.get_node(0))
+
+    print("Reverse the linked list")
+    linked_list.reverse()
+    print(linked_list)
+
+    print()
+    print("Iterate")
     for node in linked_list:
         print(node)
+    print()
 
+    print("Queues")
+    queue = Queue()
+    print("Enqueue a, b, c and d")
+    queue.enqueue(Node("a"))
+    queue.enqueue(Node("b"))
+    queue.enqueue(Node("c"))
+    queue.add_last(Node("d"))
+    print(queue)
+    print("Dequeue")
+    queue.dequeue()
+    print(queue)
+
+    print()
+    print("Circular Linked Lists")
     circular_linked_list = CircularLinkedList()
     a = Node("a")
     b = Node("b")
