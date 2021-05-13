@@ -3,14 +3,18 @@ class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
+        # Only for doubly linked list
+        self.previous = None
 
     def __repr__(self):
         return self.data
 
 
+# Singly linked list
 class LinkedList:
     def __init__(self, nodes=None):
         self.head = None
+        # Allows to quickly create linked lists with some data
         if nodes is not None:
             node = Node(data=nodes.pop(0))
             self.head = node
@@ -100,6 +104,43 @@ class LinkedList:
 
         raise Exception("Node with data '%s' not found" % target_node_data)
 
+    def get_node(self, target_node_data):
+        if self.head is None:
+            raise Exception("List is empty")
+
+        if self.head.data == target_node_data:
+            self.head = self.head.next
+            return
+
+        previous_node = self.head
+        for node in self:
+            if node.data == target_node_data:
+                previous_node.next = node.next
+                return
+            previous_node = node
+
+        raise Exception("Node with data '%s' not found" % target_node_data)
+
+
+class CircularLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def traverse(self, starting_point=None):
+        if starting_point is None:
+            starting_point = self.head
+        node = starting_point
+        while node is not None and (node.next != starting_point):
+            yield node
+            node = node.next
+        yield node
+
+    def print_list(self, starting_point=None):
+        nodes = []
+        for node in self.traverse(starting_point):
+            nodes.append(str(node))
+        print(" -> ".join(nodes))
+
 
 def main():
     linked_list = LinkedList()
@@ -124,6 +165,20 @@ def main():
     print(linked_list)
     for node in linked_list:
         print(node)
+
+    circular_linked_list = CircularLinkedList()
+    a = Node("a")
+    b = Node("b")
+    c = Node("c")
+    d = Node("d")
+    a.next = b
+    b.next = c
+    c.next = d
+    d.next = a
+    circular_linked_list.head = a
+    circular_linked_list.print_list()
+    circular_linked_list.print_list(b)
+    circular_linked_list.print_list(d)
 
 
 if __name__ == "__main__":
