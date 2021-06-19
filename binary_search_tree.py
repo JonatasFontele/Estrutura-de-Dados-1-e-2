@@ -40,42 +40,62 @@ def delete_node(root, data):
     if root is None:
         return root
 
-    # If the key to be deleted is smaller than the root's key then it lies in  left subtree
+    # Recursive calls for ancestors of
+    # node to be deleted
     if data < root.data:
         root.left = delete_node(root.left, data)
+        return root
 
-    # If the kye to be delete
-    # is greater than the root's key
-    # then it lies in right subtree
     elif data > root.data:
         root.right = delete_node(root.right, data)
+        return root
 
-    # If key is same as root's key, then this is the node
-    # to be deleted
+    # We reach here when root is the node
+    # to be deleted.
+
+    # If root node is a leaf node
+
+    if root.left is None and root.right is None:
+        return None
+
+    # If one of the children is empty
+
+    if root.left is None:
+        temp = root.right
+        # root = None
+        return temp
+
+    elif root.right is None:
+        temp = root.left
+        # root = None
+        return temp
+
+    # If both children exist
+
+    succParent = root
+
+    # Find Successor
+
+    succ = root.right
+
+    while succ.left is not None:
+        succParent = succ
+        succ = succ.left
+
+    # Delete successor.Since successor
+    # is always left child of its parent
+    # we can safely make successor's right
+    # right child as left of its parent.
+    # If there is no succ, then assign
+    # succ->right to succParent->right
+    if succParent != root:
+        succParent.left = succ.right
     else:
+        succParent.right = succ.right
 
-        # Node with only one child or no child
-        if root.left is None:
-            temp = root.right
-            root = None
-            return temp
+    # Copy Successor Data to root
 
-        elif root.right is None:
-            temp = root.left
-            root = None
-            return temp
-
-        # Node with two children:
-        # Get the inorder successor
-        # (smallest in the right subtree)
-        temp = min_value_node(root.right)
-
-        # Copy the inorder successor's
-        # content to this node
-        root.key = temp.key
-
-        # Delete the inorder successor
-        root.right = delete_node(root.right, temp.key)
+    root.data = succ.data
 
     return root
 
@@ -119,38 +139,43 @@ def max_depth(node):
             return rDepth + 1
 
 
-# Driver program to test the above functions
-# Let us create the following BST
-#    50
-#  /     \
-# 30     70
-#  / \ / \
-# 20 40 60 80
+def main():
+    # Driver program to test the above functions
+    # Let us create the following BST
+    #    50
+    #  /     \
+    # 30     70
+    #  / \ / \
+    # 20 40 60 80
 
-root = Node(50)
-root = insert(root, 30)
-root = insert(root, 20)
-root = insert(root, 40)
-root = insert(root, 70)
-root = insert(root, 60)
-root = insert(root, 80)
+    root = Node(50)
+    root = insert(root, 30)
+    root = insert(root, 20)
+    root = insert(root, 40)
+    root = insert(root, 70)
+    root = insert(root, 60)
+    root = insert(root, 80)
 
-# Print inoder traversal of the BST
-inorder(root)
+    # Print inorder traversal of the BST
+    inorder(root)
 
-print("Height of tree is %d" % (max_depth(root)))
+    print(f"Height of tree is {max_depth(root)}")
 
-print("\nDelete 20")
-root = delete_node(root, 20)
-print("Inorder traversal of the modified tree")
-inorder(root)
+    print("\nDelete 20")
+    root = delete_node(root, 20)
+    print("Inorder traversal of the modified tree")
+    inorder(root)
 
-print("\nDelete 30")
-root = delete_node(root, 30)
-print("Inorder traversal of the modified tree")
-inorder(root)
+    print("\nDelete 30")
+    root = delete_node(root, 30)
+    print("Inorder traversal of the modified tree")
+    inorder(root)
 
-print("\nDelete 50")
-root = delete_node(root, 50)
-print("Inorder traversal of the modified tree")
-inorder(root)
+    print("\nDelete 50")
+    root = delete_node(root, 50)
+    print("Inorder traversal of the modified tree")
+    inorder(root)
+
+
+if __name__ == "__main__":
+    main()
